@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'main.dart';
 import 'homepage.dart';
+import 'signuppage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 class LoginPage extends StatefulWidget {
-
   const LoginPage({Key? key}) : super(key: key);
 
   @override
@@ -20,7 +20,8 @@ class _LoginPageState extends State<LoginPage> {
   void _login() {
     if (_formKey.currentState!.validate()) {
       // Perform login action
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Logging in...')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Logging in...')));
     }
   }
 
@@ -45,8 +46,7 @@ class _LoginPageState extends State<LoginPage> {
                   } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => MyHomePage()
-                      ),
+                      MaterialPageRoute(builder: (context) => MyHomePage()),
                     );
                   }
                   return null;
@@ -67,6 +67,15 @@ class _LoginPageState extends State<LoginPage> {
               ElevatedButton(
                 onPressed: _login,
                 child: Text('Login'),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SignUpPage()),
+                );},
+                child: Text('Sign Up'),
               ),
             ],
           ),
