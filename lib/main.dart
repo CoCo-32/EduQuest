@@ -1,61 +1,77 @@
-// Importing important packages require to connect
-// Flutter and Dart
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-// Main Function
-void main() {
-// Giving command to runApp() to run the app.
-
-/* The purpose of the runApp() function is to attach
-the given widget to the screen. */
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
 }
 
-// Widget is used to create UI in flutter framework.
-
-/* StatelessWidget is a widget, which does not maintain
-any state of the widget. */
-
-/* MyApp extends StatelessWidget and overrides its
-build method. */
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-// This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // title of the application
-      title: 'Hello World Demo Application',
-      // theme of the widget
+      title: 'EduQuest App'
       theme: ThemeData(
-        primarySwatch: Colors.lightGreen,
+        primarySwatch: Colors.blue,
       ),
-      // Inner UI of the application
-      home: const MyHomePage(title: 'Home page'),
+      home: MyHomePage(),
     );
   }
 }
 
-/* This class is similar to MyApp instead it
-returns Scaffold Widget */
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-  final String title;
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key}) : super(key: key);
+
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  int _selectedIndex = 0;
+
+  static const List<Widget> _widgetOptions = <Widget>[
+    Text('Lesson Page'),
+    Text('Assessment Page'),
+    Text('Quiz Page'),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: const Text('EduQuest App'),
       ),
-      // Sets the content to the
-      // center of the application page
-      body: const Center(
-        // Sets the content of the Application
-          child: Text(
-            'Welcome to GeeksForGeeks!',
-          )),
+      body: Center(
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.school),
+            label: 'Lessons',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.assignment),
+            label: 'Assessments',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.quiz),
+            label: 'Quiz',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.blue,
+        onTap: _onItemTapped,
+      ),
     );
   }
 }
