@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "867391642288",
+    "project_id": "edu-quest-e8663",
+    "storage_bucket": "edu-quest-e8663.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:867391642288:android:6e96074564ad3e7d34f975",
+        "android_client_info": {
+          "package_name": "edu.quest"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJh6tXku98XQhSbb6BxCV9_XH1A1jFmvI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main() async {
-  //WidgetsFlutterBinding.ensureInitialized();
-  //await Firebase.initializeApp();
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MyApp());
 }
 
@@ -13,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'EduQuest',
+      title: 'EduQuest App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -44,51 +47,33 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  ButtonStyle _buttonStyle(int index) {
-    return ElevatedButton.styleFrom(
-      backgroundColor: _selectedIndex == index ? Colors.blue : Colors.white70,
-      foregroundColor: _selectedIndex == index ? Colors.white : Colors.black,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'EduQuest',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(48.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(width: 10),
-              ElevatedButton(
-                style: _buttonStyle(0),
-                onPressed: () => _onItemTapped(0),
-                child: const Text('Lessons'),
-              ),
-              SizedBox(width: 10),
-              ElevatedButton(
-                style: _buttonStyle(1),
-                onPressed: () => _onItemTapped(1),
-                child: const Text('Assessments'),
-              ),
-              SizedBox(width: 10),
-              ElevatedButton(
-                style: _buttonStyle(2),
-                onPressed: () => _onItemTapped(2),
-                child: const Text('Quiz'),
-              ),
-            ],
-          ),
-        ),
+        title: const Text('EduQuest App'),
       ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.school),
+            label: 'Lessons',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.assignment),
+            label: 'Assessments',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.quiz),
+            label: 'Quiz',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.blue,
+        onTap: _onItemTapped,
       ),
     );
   }
