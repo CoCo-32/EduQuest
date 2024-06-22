@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -13,84 +11,78 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'EduQuest',
+      title: 'Login Page',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(),
+      home: LoginPage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
-
+class LoginPage extends StatefulWidget {
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _selectedIndex = 0;
+class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text('Lesson Page'),
-    Text('Assessment Page'),
-    Text('Quiz Page'),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  ButtonStyle _buttonStyle(int index) {
-    return ElevatedButton.styleFrom(
-      backgroundColor: _selectedIndex == index ? Colors.blue : Colors.white70,
-      foregroundColor: _selectedIndex == index ? Colors.white : Colors.black,
-    );
+  void _login() {
+    if (_formKey.currentState!.validate()) {
+      // Perform login action
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Logging in...')));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('EduQuest', style: TextStyle(fontWeight: FontWeight.bold)),
-        centerTitle: true,
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(48.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+        title: Text('Login'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
             children: <Widget>[
-              SizedBox(width: 10),
-              ElevatedButton(
-                style: _buttonStyle(0),
-                onPressed: () => _onItemTapped(0),
-                child: const Text('Lessons'),
+              TextFormField(
+                controller: _emailController,
+                decoration: InputDecoration(labelText: 'Email'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your email';
+                  } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                    return 'Please enter a valid email address';
+                  }
+                  return null;
+                },
               ),
-              SizedBox(width: 10),
-              ElevatedButton(
-                style: _buttonStyle(1),
-                onPressed: () => _onItemTapped(1),
-                child: const Text('Assessments'),
+              TextFormField(
+                controller: _passwordController,
+                decoration: InputDecoration(labelText: 'Password'),
+                obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your password';
+                  }
+                  return null;
+                },
               ),
-              SizedBox(width: 10),
+              SizedBox(height: 20),
               ElevatedButton(
-                style: _buttonStyle(2),
-                onPressed: () => _onItemTapped(2),
-                child: const Text('Quiz'),
+                onPressed: _login,
+                child: Text('Login'),
               ),
             ],
           ),
         ),
-      ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
       ),
     );
   }
