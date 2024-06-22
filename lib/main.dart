@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'loginpage.dart';
+import 'role_selection_page.dart';
+import 'user_login_page.dart';
+import 'user_signup_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,13 +18,13 @@ class MyApp extends StatefulWidget {
 
   @override
   State<MyApp> createState() => _MyAppState();
-  }
+}
 
-  class _MyAppState extends State<MyApp>{
+class _MyAppState extends State<MyApp>{
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-    home: LoginPage(),
+      home: RoleSelectionPage(),
     );
   }
-  }
+}

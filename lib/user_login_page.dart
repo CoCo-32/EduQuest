@@ -1,27 +1,45 @@
 import 'package:flutter/material.dart';
-import 'main.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'homepage.dart';
-import 'signuppage.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+import 'user_signup_page.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class UserLoginPage extends StatefulWidget {
+  const UserLoginPage({Key? key}) : super(key: key);
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _UserLoginPageState createState() => _UserLoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _UserLoginPageState extends State<UserLoginPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  void _login() {
+  // Function to handle login button press
+  void _login() async {
     if (_formKey.currentState!.validate()) {
-      // Perform login action
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Logging in...')));
+      try {
+        // Perform login action
+        UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+        );
+
+        // Navigate to home page if login is successful
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MyHomePage()),
+        );
+      } catch (e) {
+        // Handle login errors
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to sign in: $e'),
+            duration: Duration(seconds: 5),
+          ),
+        );
+      }
     }
   }
 
@@ -44,10 +62,7 @@ class _LoginPageState extends State<LoginPage> {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your email';
                   } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MyHomePage()),
-                    );
+                    return 'Please enter a valid email address';
                   }
                   return null;
                 },
@@ -71,10 +86,11 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SignUpPage()),
-                );},
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => UserSignUpPage()),
+                  );
+                },
                 child: Text('Sign Up'),
               ),
             ],

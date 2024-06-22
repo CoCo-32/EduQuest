@@ -23,7 +23,11 @@ class LessonListPage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => LessonDetailPage(url: lesson['fileUrl']),
+                      builder: (context) => LessonDetailPage(
+                        title: lesson['title'],
+                        description: lesson['description'],
+                        url: lesson['fileUrl'],
+                      ),
                     ),
                   );
                 },
@@ -37,9 +41,11 @@ class LessonListPage extends StatelessWidget {
 }
 
 class LessonDetailPage extends StatelessWidget {
+  final String title;
+  final String description;
   final String url;
 
-  LessonDetailPage({required this.url});
+  LessonDetailPage({required this.title, required this.description, required this.url});
 
   @override
   Widget build(BuildContext context) {
@@ -47,14 +53,38 @@ class LessonDetailPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Lesson Detail'),
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('PDF URL: $url'),
+            Text(
+              title,
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text(
+              description,
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                // Implement PDF viewer here
+                // Implement PDF viewer or open URL in browser
+                // For demonstration, just show the URL
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text('PDF URL'),
+                    content: Text(url),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text('Close'),
+                      ),
+                    ],
+                  ),
+                );
               },
               child: Text('View PDF'),
             ),

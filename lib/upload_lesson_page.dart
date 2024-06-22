@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:io';
 
 class UploadLessonPage extends StatefulWidget {
   @override
@@ -11,58 +8,91 @@ class UploadLessonPage extends StatefulWidget {
 
 class _UploadLessonPageState extends State<UploadLessonPage> {
   final _formKey = GlobalKey<FormState>();
-  File? _selectedFile;
-  String? _title;
-  String? _description;
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _slidesURLController = TextEditingController();
+  final TextEditingController _createdByController = TextEditingController();
 
-  Future<void> _pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
-    if (result != null) {
-      setState(() {
-        _selectedFile = File(result.files.single.path!);
+  DateTime _selectedDate = DateTime.now();
+  Stream<QuerySnapshot> _lessonsStream = FirebaseFirestore.instance.collection('lessons').snapshots();
+
+  // Function to handle form submission
+  void _submitForm() async {
+    if (_formKey.currentState!.validate()) {
+      // Access Firestore instance
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+      // Add a new document with auto-generated ID
+      await firestore.collection('lessons').add({
+        'title': _titleController.text,
+        'description': _descriptionController.text,
+        'slidesURL': _slidesURLController.text,
+        'createdAt': Timestamp.now(), // Store current timestamp
+        'createdBy': _createdByController.text,
       });
+
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Lesson added successfully'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+
+      // Clear text controllers after submission
+      _titleController.clear();
+      _descriptionController.clear();
+      _slidesURLController.clear();
+      _createdByController.clear();
+      setState(() {
+        _selectedDate = DateTime.now();
+        _lessonsStream = FirebaseFirestore.instance.collection('lessons').snapshots(); // Update the stream
+      });
+
+      // Navigate back to Manage Lessons page
+      Navigator.pop(context);
     }
   }
 
-  Future<void> _submitLesson() async {
-    if (_formKey.currentState!.validate() && _selectedFile != null) {
-      _formKey.currentState!.save();
-      try {
-        // Upload PDF to Firebase Storage
-        TaskSnapshot snapshot = await FirebaseStorage.instance
-            .ref('lessons/${_selectedFile!.path.split('/').last}')
-            .putFile(_selectedFile!);
-
-        // Get the download URL
-        String downloadUrl = await snapshot.ref.getDownloadURL();
-
-        // Save details to Firestore
-        await FirebaseFirestore.instance.collection('lessons').add({
-          'title': _title,
-          'description': _description,
-          'fileUrl': downloadUrl,
-          'timestamp': Timestamp.now(),
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Lesson Uploaded Successfully')));
-      } on FirebaseException catch (e) {
-        print(e);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to upload lesson')));
-      }
-    }
+  // Function to show date picker
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != _selectedDate)
+      setState(() {
+        _selectedDate = picked;
+      });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Upload Lesson')),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
+      appBar: AppBar(
+        title: Text('Upload Lesson'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () {
+              setState(() {
+                _lessonsStream = FirebaseFirestore.instance.collection('lessons').snapshots(); // Refresh the stream
+              });
+            },
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
           child: Column(
-            children: [
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
               TextFormField(
+                controller: _titleController,
                 decoration: InputDecoration(labelText: 'Title'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -70,24 +100,86 @@ class _UploadLessonPageState extends State<UploadLessonPage> {
                   }
                   return null;
                 },
-                onSaved: (value) {
-                  _title = value;
-                },
               ),
+              SizedBox(height: 20),
               TextFormField(
+                controller: _descriptionController,
                 decoration: InputDecoration(labelText: 'Description'),
-                onSaved: (value) {
-                  _description = value;
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a description';
+                  }
+                  return null;
                 },
               ),
-              ElevatedButton(
-                onPressed: _pickFile,
-                child: Text('Select PDF'),
+              SizedBox(height: 20),
+              TextFormField(
+                controller: _slidesURLController,
+                decoration: InputDecoration(labelText: 'Slides URL'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the slides URL';
+                  }
+                  return null;
+                },
               ),
-              _selectedFile != null ? Text('Selected: ${_selectedFile!.path.split('/').last}') : Container(),
+              SizedBox(height: 20),
+              TextFormField(
+                controller: _createdByController,
+                decoration: InputDecoration(labelText: 'Created By'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the creator\'s name';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  Text(
+                    'Created At: ${_selectedDate.toLocal()}'.split(' ')[0],
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  SizedBox(width: 20),
+                  ElevatedButton(
+                    onPressed: () => _selectDate(context),
+                    child: Text('Select date'),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _submitLesson,
-                child: Text('Upload Lesson'),
+                onPressed: _submitForm,
+                child: Text('Add Lesson'),
+              ),
+              SizedBox(height: 20),
+              Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: _lessonsStream,
+                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Something went wrong');
+                    }
+
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Text("Loading");
+                    }
+
+                    return ListView(
+                      children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                        Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                        Timestamp createdAt = data['createdAt'];
+                        DateTime createdAtDate = createdAt.toDate();
+                        return ListTile(
+                          title: Text(data['title']),
+                          subtitle: Text(data['description']),
+                          trailing: Text('Created by: ${data['createdBy']} on ${createdAtDate.toLocal()}'),
+                        );
+                      }).toList(),
+                    );
+                  },
+                ),
               ),
             ],
           ),

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'loginpage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'user_login_page.dart';
 
-class SignUpPage extends StatefulWidget {
+class UserSignUpPage extends StatefulWidget {
   @override
-  _SignUpPageState createState() => _SignUpPageState();
+  _UserSignUpPageState createState() => _UserSignUpPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+class _UserSignUpPageState extends State<UserSignUpPage> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -20,18 +21,36 @@ class _SignUpPageState extends State<SignUpPage> {
     super.dispose();
   }
 
-  void _submit() {
+  void _submit() async {
     if (_formKey.currentState!.validate()) {
-      String username = _usernameController.text;
-      String email = _emailController.text;
+      String username = _usernameController.text.trim();
+      String email = _emailController.text.trim();
       String password = _passwordController.text;
 
-      // For demonstration, print the values to the console
-      print('Username: $username');
-      print('Email: $email');
-      print('Password: $password');
+      try {
+        UserCredential userCredential =
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
 
-      // You can add further logic here, e.g., sending data to a server
+        // Optionally update the user's display name
+        await userCredential.user!.updateDisplayName(username);
+
+        // Navigate to login page after successful sign up
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => UserLoginPage()),
+        );
+      } catch (e) {
+        // Handle sign up errors
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to sign up: $e'),
+            duration: Duration(seconds: 5),
+          ),
+        );
+      }
     }
   }
 
