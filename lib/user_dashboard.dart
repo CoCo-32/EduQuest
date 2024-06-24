@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'assessment_list_page.dart'; // Import the assessment list page here
 import 'lesson_list_page.dart'; // Import the lessons page here
 import 'quiz_list_page.dart'; // Import the quizzes page here
+import 'role_selection_page.dart'; // Import the role selection page
 
 class UserDashboard extends StatefulWidget {
   const UserDashboard({Key? key}) : super(key: key);
@@ -32,19 +33,36 @@ class _UserDashboardState extends State<UserDashboard> {
     );
   }
 
+  void _logOut(BuildContext context) {
+    // Navigate to RoleSelectionPage and remove all previous routes
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => RoleSelectionPage()),
+          (route) => false, // This prevents going back to the previous screens
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('EduQuest',
-            style: TextStyle(fontWeight: FontWeight.bold)
+        title: const Text(
+          'EduQuest',
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: Color(0xFFFFFDD0),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () => _logOut(context),
+          ),
+        ],
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(48.0),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center, // Center buttons horizontally
+            mainAxisAlignment:
+            MainAxisAlignment.center, // Center buttons horizontally
             children: <Widget>[
               ElevatedButton(
                 style: _buttonStyle(0),
