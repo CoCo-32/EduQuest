@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'quiz_detail_page.dart';
 
-class QuizListPage extends StatelessWidget {
+class QuizListPage extends StatefulWidget {
+  @override
+  _QuizListPageState createState() => _QuizListPageState();
+}
+
+class _QuizListPageState extends State<QuizListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,42 +30,13 @@ class QuizListPage extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) => QuizDetailPage(quiz: quiz),
                     ),
-                  );
+                  ).then((_) {
+                    // Refresh the list when returning from the QuizDetailPage
+                    setState(() {});
+                  });
                 },
               );
             },
-          );
-        },
-      ),
-    );
-  }
-}
-
-class QuizDetailPage extends StatelessWidget {
-  final DocumentSnapshot quiz;
-
-  QuizDetailPage({required this.quiz});
-
-  @override
-  Widget build(BuildContext context) {
-    List<dynamic> questions = quiz['questions'];
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(quiz['title']),
-      ),
-      body: ListView.builder(
-        itemCount: questions.length,
-        itemBuilder: (context, index) {
-          var question = questions[index];
-          return ListTile(
-            title: Text(question['question']),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: List.generate(4, (optionIndex) {
-                return Text('${optionIndex + 1}. ${question['options'][optionIndex]}');
-              }),
-            ),
           );
         },
       ),
