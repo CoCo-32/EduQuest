@@ -15,7 +15,9 @@ class _AssessmentListPageState extends State<AssessmentListPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Assessments'),
+        backgroundColor: Color(0xFFFFFDD0),
       ),
+      backgroundColor: Color(0xFFFFFDD0),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection('assessments').snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -25,7 +27,7 @@ class _AssessmentListPageState extends State<AssessmentListPage> {
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return Center(child: Text('No assessments available'));
           }
-          return ListView.builder(
+          return ListView.separated(
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
               DocumentSnapshot assessment = snapshot.data!.docs[index];
@@ -69,6 +71,12 @@ class _AssessmentListPageState extends State<AssessmentListPage> {
                     },
                   );
                 },
+              );
+            },
+            separatorBuilder: (context, index) {
+              return Divider(
+                color: Colors.grey,
+                thickness: 1.0,
               );
             },
           );

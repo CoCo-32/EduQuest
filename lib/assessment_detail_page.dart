@@ -65,7 +65,9 @@ class _AssessmentDetailPageState extends State<AssessmentDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Assessment Detail'),
+        backgroundColor: Color(0xFFFFFDD0),
       ),
+      backgroundColor: Color(0xFFFFFDD0),
       body: Builder(
         builder: (context) => Padding(
           padding: const EdgeInsets.all(16.0),
