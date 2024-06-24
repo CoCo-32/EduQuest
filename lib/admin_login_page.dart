@@ -138,6 +138,25 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                       ),
                     ),
                   ),
+                  SizedBox(
+                    width: double.infinity, // Make the button full-width
+                    height: 40,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RoleSelectionPage(),
+                          ),
+                        );
+                      },
+                      child: Text('Back to Role Selection'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
