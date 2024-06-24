@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Firebase Authentication
 import 'admin_dashboard.dart';
+import 'role_selection_page.dart'; // Import the RoleSelectionPage
 
 class AdminLoginPage extends StatefulWidget {
   @override
@@ -33,8 +34,8 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  AdminDashboard()), // Replace with your admin dashboard page
+            builder: (context) => AdminDashboard(),
+          ),
         );
       } catch (e) {
         // Handle login errors here (e.g., display error message)
@@ -61,14 +62,31 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
     }
   }
 
+  void _goToRoleSelectionPage() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RoleSelectionPage(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Admin Login',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
+        title: Text(
+          'Admin Login',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+        ),
         centerTitle: true,
         backgroundColor: Color(0xFFFFFDD0),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.home),
+            onPressed: _goToRoleSelectionPage, // Navigate to RoleSelectionPage
+          ),
+        ],
       ),
       backgroundColor: Color(0xFFFFFDD0),
       body: Center(

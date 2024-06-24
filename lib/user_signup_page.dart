@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'user_login_page.dart';
+import 'role_selection_page.dart'; // Import the role selection page here
 
 class UserSignUpPage extends StatefulWidget {
   @override
@@ -29,7 +30,7 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
 
       try {
         UserCredential userCredential =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: email,
           password: password,
         );
@@ -124,6 +125,26 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
                       child: Text('Sign Up'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.lightBlue,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity, // Make the button full-width
+                    height: 35,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RoleSelectionPage(),
+                          ),
+                        );
+                      },
+                      child: Text('Back'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey,
                         foregroundColor: Colors.white,
                       ),
                     ),
