@@ -64,23 +64,35 @@ class _UserDashboardState extends State<UserDashboard> {
             mainAxisAlignment:
             MainAxisAlignment.center, // Center buttons horizontally
             children: <Widget>[
-              ElevatedButton(
+          SizedBox(
+          width: 150, // Make the button full-width
+            height: 40,
+            child: ElevatedButton(
                 style: _buttonStyle(0),
                 onPressed: () => _onItemTapped(0),
                 child: const Text('Assessments'),
               ),
+          ),
               SizedBox(width: 10),
-              ElevatedButton(
+          SizedBox(
+            width: 150, // Make the button full-width
+            height: 40,
+            child: ElevatedButton(
                 style: _buttonStyle(1),
                 onPressed: () => _onItemTapped(1),
                 child: const Text('Lessons'),
               ),
+          ),
               SizedBox(width: 10),
-              ElevatedButton(
+          SizedBox(
+            width: 150, // Make the button full-width
+            height: 40,
+            child: ElevatedButton(
                 style: _buttonStyle(2),
                 onPressed: () => _onItemTapped(2),
                 child: const Text('Quizzes'),
               ),
+          ),
             ],
           ),
         ),

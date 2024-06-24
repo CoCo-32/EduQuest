@@ -6,7 +6,8 @@ class LessonDetailPage extends StatelessWidget {
   final String description;
   final String url;
 
-  LessonDetailPage({required this.title, required this.description, required this.url});
+  LessonDetailPage(
+      {required this.title, required this.description, required this.url});
 
   void _launchURL(BuildContext context) async {
     if (await canLaunch(url)) {
@@ -43,9 +44,19 @@ class LessonDetailPage extends StatelessWidget {
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => _launchURL(context), // Launch URL when button is pressed
-              child: Text('View Slides'),
+            SizedBox(
+              width: 200,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: () =>
+                    _launchURL(context), // Launch URL when button is pressed
+                child: Text('View Slides'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.lightBlue,
+                  foregroundColor: Colors.white,
+                  textStyle: TextStyle(fontSize: 20),
+                ),
+              ),
             ),
           ],
         ),
