@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'assessment_detail_page.dart'; // Import the updated AssessmentDetailPage
 
-class AssessmentListPage extends StatelessWidget {
+class AssessmentListPage extends StatefulWidget {
+  @override
+  _AssessmentListPageState createState() => _AssessmentListPageState();
+}
+
+class _AssessmentListPageState extends State<AssessmentListPage> {
+  Map<String, bool> submissionStatus = {}; // Map to track submission status
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,20 +19,54 @@ class AssessmentListPage extends StatelessWidget {
       body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection('assessments').snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Center(child: Text('No assessments available'));
+          }
           return ListView.builder(
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
               DocumentSnapshot assessment = snapshot.data!.docs[index];
-              return ListTile(
-                title: Text(assessment['title']),
-                subtitle: Text(assessment['description']),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AssessmentDetailPage(url: assessment['fileUrl']),
-                    ),
+              String assessmentId = assessment.id;
+
+              return FutureBuilder(
+                future: _getSubmission(assessmentId), // Fetch submission data
+                builder: (context, AsyncSnapshot<DocumentSnapshot> submissionSnapshot) {
+                  if (submissionSnapshot.connectionState == ConnectionState.waiting) {
+                    return ListTile(
+                      title: Text(assessment['title']),
+                      subtitle: Text(assessment['description']),
+                      trailing: CircularProgressIndicator(),
+                    );
+                  }
+
+                  bool isSubmitted = submissionSnapshot.hasData && submissionSnapshot.data!.exists;
+                  submissionStatus[assessmentId] = isSubmitted; // Track submission status
+
+                  return ListTile(
+                    title: Text(assessment['title']),
+                    subtitle: Text(assessment['description']),
+                    trailing: isSubmitted ? Text('Submitted') : null,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AssessmentDetailPage(
+                            title: assessment['title'],
+                            fileUrl: assessment['pdfURL'],
+                            onSubmitted: () {
+                              // Handle submission update if needed
+                              // This callback is triggered when submission is complete
+                              setState(() {
+                                submissionStatus[assessmentId] = true;
+                              });
+                            },
+                          ),
+                        ),
+                      );
+                    },
                   );
                 },
               );
@@ -34,33 +76,13 @@ class AssessmentListPage extends StatelessWidget {
       ),
     );
   }
-}
 
-class AssessmentDetailPage extends StatelessWidget {
-  final String url;
-
-  AssessmentDetailPage({required this.url});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Assessment Detail'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('PDF URL: $url'),
-            ElevatedButton(
-              onPressed: () {
-                // Implement PDF viewer here
-              },
-              child: Text('View PDF'),
-            ),
-          ],
-        ),
-      ),
-    );
+  Future<DocumentSnapshot> _getSubmission(String assessmentId) async {
+    try {
+      return await FirebaseFirestore.instance.collection('submissions').doc(assessmentId).get();
+    } catch (e) {
+      print('Error fetching submission: $e');
+      return Future.error(e);
+    }
   }
 }

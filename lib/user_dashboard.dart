@@ -1,25 +1,22 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-import 'user_login_page.dart';
+import 'assessment_list_page.dart'; // Import the assessment list page here
+import 'lesson_list_page.dart'; // Import the lessons page here
+import 'quiz_list_page.dart'; // Import the quizzes page here
 
-
-class MyHomePage extends StatefulWidget {
-
-  const MyHomePage({Key? key}) : super(key: key);
+class UserDashboard extends StatefulWidget {
+  const UserDashboard({Key? key}) : super(key: key);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _UserDashboardState createState() => _UserDashboardState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _UserDashboardState extends State<UserDashboard> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text('Lesson Page'),
-
-    Text('Quiz Page'),
+  static List<Widget> _widgetOptions = <Widget>[
+    AssessmentListPage(), // Assessment list page
+    LessonListPage(), // Lessons page
+    QuizListPage(), // Quizzes page
   ];
 
   void _onItemTapped(int index) {
@@ -44,25 +41,24 @@ class _MyHomePageState extends State<MyHomePage> {
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(48.0),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center, // Center buttons horizontally
             children: <Widget>[
-              SizedBox(width: 10),
               ElevatedButton(
                 style: _buttonStyle(0),
                 onPressed: () => _onItemTapped(0),
-                child: const Text('Lessons'),
+                child: const Text('Assessments'),
               ),
               SizedBox(width: 10),
               ElevatedButton(
                 style: _buttonStyle(1),
                 onPressed: () => _onItemTapped(1),
-                child: const Text('Assessments'),
+                child: const Text('Lessons'),
               ),
               SizedBox(width: 10),
               ElevatedButton(
                 style: _buttonStyle(2),
                 onPressed: () => _onItemTapped(2),
-                child: const Text('Quiz'),
+                child: const Text('Quizzes'),
               ),
             ],
           ),

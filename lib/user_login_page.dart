@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'homepage.dart';
+import 'user_dashboard.dart';
 import 'user_signup_page.dart';
 
 class UserLoginPage extends StatefulWidget {
@@ -29,7 +29,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
         // Navigate to home page if login is successful
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => MyHomePage()),
+          MaterialPageRoute(builder: (context) => UserDashboard()),
         );
       } catch (e) {
         // Handle login errors

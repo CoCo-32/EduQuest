@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'lesson_detail_page.dart'; // Import the LessonDetailPage
 
 class LessonListPage extends StatelessWidget {
   @override
@@ -11,7 +12,12 @@ class LessonListPage extends StatelessWidget {
       body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection('lessons').snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Center(child: Text('No lessons available'));
+          }
           return ListView.builder(
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
@@ -26,7 +32,7 @@ class LessonListPage extends StatelessWidget {
                       builder: (context) => LessonDetailPage(
                         title: lesson['title'],
                         description: lesson['description'],
-                        url: lesson['fileUrl'],
+                        url: lesson['slidesURL'], // Fetch slidesURL instead of fileUrl
                       ),
                     ),
                   );
@@ -35,61 +41,6 @@ class LessonListPage extends StatelessWidget {
             },
           );
         },
-      ),
-    );
-  }
-}
-
-class LessonDetailPage extends StatelessWidget {
-  final String title;
-  final String description;
-  final String url;
-
-  LessonDetailPage({required this.title, required this.description, required this.url});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Lesson Detail'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              title,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            Text(
-              description,
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                // Implement PDF viewer or open URL in browser
-                // For demonstration, just show the URL
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text('PDF URL'),
-                    content: Text(url),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: Text('Close'),
-                      ),
-                    ],
-                  ),
-                );
-              },
-              child: Text('View PDF'),
-            ),
-          ],
-        ),
       ),
     );
   }
