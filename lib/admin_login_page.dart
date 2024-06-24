@@ -110,10 +110,14 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                   SizedBox(height: 32),
                   SizedBox(
                     width: double.infinity, // Make the button full-width
-                    height: 35,
+                    height: 40,
                     child: ElevatedButton(
                       onPressed: _loginAdmin,
                       child: Text('Login'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.lightBlue,
+                        foregroundColor: Colors.white,
+                      ),
                     ),
                   ),
                 ],

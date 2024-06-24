@@ -129,7 +129,7 @@ class _UploadLessonPageState extends State<UploadLessonPage> {
                     ),
                     SizedBox(height: 20),
                     SizedBox(
-                      width: 300,
+                      width: 200,
                       height: 40,
                       child: ElevatedButton(
                         onPressed: _submitForm,

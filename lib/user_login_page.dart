@@ -90,16 +90,20 @@ class _UserLoginPageState extends State<UserLoginPage> {
                   SizedBox(height: 25),
                   SizedBox(
                     width: double.infinity, // Make the button full-width
-                    height: 35,
+                    height: 40,
                     child: ElevatedButton(
                       onPressed: _login,
                       child: Text('Login'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.lightBlue,
+                        foregroundColor: Colors.white,
+                      ),
                     ),
                   ),
               SizedBox(height: 25),
               SizedBox(
                 width: double.infinity, // Make the button full-width
-                height: 35,
+                height: 40,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.push(
@@ -109,6 +113,10 @@ class _UserLoginPageState extends State<UserLoginPage> {
                     );
                   },
                   child: Text('Sign Up'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.lightGreen,
+                    foregroundColor: Colors.white,
+                  ),
                   ),
               ),
                 ],

@@ -122,6 +122,10 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
                     child: ElevatedButton(
                       onPressed: _submit,
                       child: Text('Sign Up'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.lightBlue,
+                        foregroundColor: Colors.white,
+                      ),
                     ),
                   ),
                 ],
