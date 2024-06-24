@@ -75,11 +75,17 @@ class _AssessmentDetailPageState extends State<AssessmentDetailPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('PDF URL:'),
+              SizedBox(height: 5),
               ElevatedButton(
                 onPressed: () {
                   _launchPDFURL(widget.pdfURL);
                 },
                 child: Text('View PDF'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.lightBlue,
+                  foregroundColor: Colors.white,
+                  textStyle: TextStyle(fontSize: 14),
+                ),
               ),
               SizedBox(height: 20),
               Text('Submit Your Work:'),
@@ -117,6 +123,11 @@ class _AssessmentDetailPageState extends State<AssessmentDetailPage> {
                   }
                 },
                 child: Text('Submit'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.lightBlue,
+                  foregroundColor: Colors.white,
+                  textStyle: TextStyle(fontSize: 14),
+                ),
               ),
               SizedBox(height: 10),
               if (isSubmitted)

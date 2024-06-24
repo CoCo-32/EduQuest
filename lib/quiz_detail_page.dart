@@ -67,7 +67,9 @@ class _QuizDetailPageState extends State<QuizDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.quiz['title']),
+        backgroundColor: Color(0xFFFFFDD0),
       ),
+      backgroundColor: Color(0xFFFFFDD0),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -111,20 +113,29 @@ class _QuizDetailPageState extends State<QuizDetailPage> {
               ),
             ),
             SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                if (userName.isNotEmpty) {
-                  submitQuiz(context);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Please enter your name'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                }
-              },
-              child: Text('Submit now'),
+            SizedBox(
+              width: 175,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: () {
+                  if (userName.isNotEmpty) {
+                    submitQuiz(context);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Please enter your name'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                },
+                child: Text('Submit now'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.lightBlue,
+                  foregroundColor: Colors.white,
+                  textStyle: TextStyle(fontSize: 20),
+                ),
+              ),
             ),
           ],
         ),

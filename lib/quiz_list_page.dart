@@ -13,12 +13,14 @@ class _QuizListPageState extends State<QuizListPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Quizzes'),
+        backgroundColor: Color(0xFFFFFDD0),
       ),
+      backgroundColor: Color(0xFFFFFDD0),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection('quizzes').snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
-          return ListView.builder(
+          return ListView.separated(
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
               DocumentSnapshot quiz = snapshot.data!.docs[index];
@@ -35,6 +37,12 @@ class _QuizListPageState extends State<QuizListPage> {
                     setState(() {});
                   });
                 },
+              );
+            },
+            separatorBuilder: (context, index) {
+              return Divider(
+                color: Colors.grey,
+                thickness: 1.0,
               );
             },
           );
