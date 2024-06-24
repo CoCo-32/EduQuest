@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:io';
+import 'package:url_launcher/url_launcher.dart';
 
 class UploadAssessmentPage extends StatefulWidget {
   @override
@@ -11,58 +9,82 @@ class UploadAssessmentPage extends StatefulWidget {
 
 class _UploadAssessmentPageState extends State<UploadAssessmentPage> {
   final _formKey = GlobalKey<FormState>();
-  File? _selectedFile;
-  String? _title;
-  String? _description;
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _pdfURLController = TextEditingController();
 
-  Future<void> _pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
-    if (result != null) {
-      setState(() {
-        _selectedFile = File(result.files.single.path!);
-      });
-    }
-  }
+  Stream<QuerySnapshot> _assessmentsStream = FirebaseFirestore.instance.collection('assessments').snapshots();
 
-  Future<void> _submitAssessment() async {
-    if (_formKey.currentState!.validate() && _selectedFile != null) {
-      _formKey.currentState!.save();
-      try {
-        // Upload PDF to Firebase Storage
-        TaskSnapshot snapshot = await FirebaseStorage.instance
-            .ref('assessments/${_selectedFile!.path.split('/').last}') // Use file name from path
-            .putFile(_selectedFile!);
-
-        // Get the download URL
-        String downloadUrl = await snapshot.ref.getDownloadURL();
-
-        // Save details to Firestore
-        await FirebaseFirestore.instance.collection('assessments').add({
-          'title': _title,
-          'description': _description,
-          'fileUrl': downloadUrl,
-          'timestamp': Timestamp.now(),
+  // Function to handle form submission
+  void _submitForm() async {
+    if (_formKey.currentState!.validate()) {
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+        await firestore.collection('assessments').add({
+          'title': _titleController.text,
+          'description': _descriptionController.text,
+          'pdfURL': _pdfURLController.text,
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Assessment Uploaded Successfully')));
-      } on FirebaseException catch (e) {
-        print(e);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to upload assessment')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Assessment added successfully'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+
+        _titleController.clear();
+        _descriptionController.clear();
+        _pdfURLController.clear();
+        setState(() {
+          _assessmentsStream = FirebaseFirestore.instance.collection('assessments').snapshots();
+        });
+
+        Navigator.pop(context);
       }
+    }
+
+  // Function to remove an assessment
+  void _removeAssessment(String docId) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+      await firestore.collection('assessments').doc(docId).delete();
+      setState(() {
+        _assessmentsStream = FirebaseFirestore.instance.collection('assessments').snapshots();
+      });
+    }
+
+  // Function to launch URL
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw 'Could not launch $url';
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Upload Assessment')),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
+      appBar: AppBar(
+        title: Text('Upload Assessment'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () {
+              setState(() {
+                _assessmentsStream = FirebaseFirestore.instance.collection('assessments').snapshots();
+              });
+            },
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
           child: Column(
-            children: [
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
               TextFormField(
+                controller: _titleController,
                 decoration: InputDecoration(labelText: 'Title'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -70,24 +92,84 @@ class _UploadAssessmentPageState extends State<UploadAssessmentPage> {
                   }
                   return null;
                 },
-                onSaved: (value) {
-                  _title = value;
-                },
               ),
+              SizedBox(height: 20),
               TextFormField(
+                controller: _descriptionController,
                 decoration: InputDecoration(labelText: 'Description'),
-                onSaved: (value) {
-                  _description = value;
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a description';
+                  }
+                  return null;
                 },
               ),
-              ElevatedButton(
-                onPressed: _pickFile,
-                child: Text('Select PDF'),
+              SizedBox(height: 20),
+              TextFormField(
+                controller: _pdfURLController,
+                decoration: InputDecoration(labelText: 'PDF URL'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the PDF URL';
+                  }
+                  return null;
+                },
               ),
-              _selectedFile != null ? Text('Selected: ${_selectedFile!.path.split('/').last}') : Container(),
+              SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _submitAssessment,
-                child: Text('Upload Assessment'),
+                onPressed: _submitForm,
+                child: Text('Add Assessment'),
+              ),
+              SizedBox(height: 20),
+              Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: _assessmentsStream,
+                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Something went wrong');
+                    }
+
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Text("Loading");
+                    }
+
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: DataTable(
+                        columns: [
+                          DataColumn(label: Text('Title')),
+                          DataColumn(label: Text('Description')),
+                          DataColumn(label: Text('PDF URL')),
+                          DataColumn(label: Text('Actions')),
+                        ],
+                        rows: snapshot.data!.docs.map((DocumentSnapshot document) {
+                          Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                          return DataRow(
+                            cells: [
+                              DataCell(Text(data['title'])),
+                              DataCell(Text(data['description'])),
+                              DataCell(
+                                InkWell(
+                                  onTap: () => _launchURL(data['pdfURL']),
+                                  child: Text(
+                                    data['pdfURL'] ,
+                                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                IconButton(
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () => _removeAssessment(document.id),
+                                ),
+                              ),
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                    );
+                  },
+                ),
               ),
             ],
           ),
