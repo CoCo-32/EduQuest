@@ -3,6 +3,8 @@ import 'upload_lesson_page.dart'; // Import the UploadLessonPage
 import 'upload_assessment_page.dart'; // Import the UploadAssessmentPage
 import 'upload_quiz_page.dart'; // Import the UploadQuizPage
 import 'role_selection_page.dart'; // Import the RoleSelectionPage
+import 'check_assessment_submission_page.dart'; // Import the CheckSubmissionPage
+import 'check_quiz_submission_page.dart'; // Import the QuizSubmissionPage
 
 class AdminDashboard extends StatelessWidget {
   @override
@@ -87,6 +89,48 @@ class AdminDashboard extends StatelessWidget {
                   child: Text('Manage Quizzes'),
                 ),
               ),
+              SizedBox(height: 10),
+              SizedBox(
+                width: 300,
+                height: 80,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Navigate to view assessment submissions
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CheckAssessmentSubmissionPage()),
+                    );
+                  },
+                  child: Text('View Assessment Submissions'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.lightBlue,
+                    foregroundColor: Colors.white,
+                    textStyle: TextStyle(fontSize: 24),
+                  ),
+                ),
+              ),
+              SizedBox(height: 10),
+              SizedBox(
+                width: 300,
+                height: 80,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Navigate to view quiz submissions
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CheckQuizSubmissionPage()),
+                    );
+                  },
+                  child: Text('View Quiz Submissions'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.lightBlue,
+                    foregroundColor: Colors.white,
+                    textStyle: TextStyle(fontSize: 24),
+                  ),
+                ),
+              ),
               SizedBox(height: 70),
               SizedBox(
                 width: 200,
@@ -98,7 +142,7 @@ class AdminDashboard extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) => RoleSelectionPage()),
-                      (Route<dynamic> route) => false,
+                          (Route<dynamic> route) => false,
                     );
                   },
                   style: ElevatedButton.styleFrom(
