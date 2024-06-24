@@ -49,7 +49,8 @@ class _UploadQuizPageState extends State<UploadQuizPage> {
         'timestamp': Timestamp.now(),
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Quiz Uploaded Successfully')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Quiz Uploaded Successfully')));
     }
   }
 
@@ -57,9 +58,9 @@ class _UploadQuizPageState extends State<UploadQuizPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text('Upload Quiz'),
-          backgroundColor: Color(0xFFFFFDD0),
-    ),
+        title: Text('Upload Quiz'),
+        backgroundColor: Color(0xFFFFFDD0),
+      ),
       backgroundColor: Color(0xFFFFFDD0),
       body: Form(
         key: _formKey,
@@ -80,9 +81,17 @@ class _UploadQuizPageState extends State<UploadQuizPage> {
                 },
               ),
               SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _addQuestion,
-                child: Text('Add Question'),
+              SizedBox(
+                width: 200,
+                height: 40,
+                child: ElevatedButton(
+                  onPressed: _addQuestion,
+                  child: Text('Add Question'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.lightBlue,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
               ),
               Expanded(
                 child: ListView.builder(
@@ -91,13 +100,16 @@ class _UploadQuizPageState extends State<UploadQuizPage> {
                     return Column(
                       children: [
                         TextFormField(
-                          decoration: InputDecoration(labelText: 'Question ${index + 1}'),
+                          decoration: InputDecoration(
+                              labelText: 'Question ${index + 1}'),
                           onChanged: (value) => _updateQuestion(index, value),
                         ),
                         ...List.generate(4, (optionIndex) {
                           return TextFormField(
-                            decoration: InputDecoration(labelText: 'Option ${optionIndex + 1}'),
-                            onChanged: (value) => _updateOption(index, optionIndex, value),
+                            decoration: InputDecoration(
+                                labelText: 'Option ${optionIndex + 1}'),
+                            onChanged: (value) =>
+                                _updateOption(index, optionIndex, value),
                           );
                         }),
                         DropdownButton<int>(
@@ -108,16 +120,25 @@ class _UploadQuizPageState extends State<UploadQuizPage> {
                               child: Text('Correct Option ${optionIndex + 1}'),
                             );
                           }),
-                          onChanged: (value) => _updateCorrectOption(index, value!),
+                          onChanged: (value) =>
+                              _updateCorrectOption(index, value!),
                         ),
                       ],
                     );
                   },
                 ),
               ),
-              ElevatedButton(
-                onPressed: _submitQuiz,
-                child: Text('Upload Quiz'),
+              SizedBox(
+                width: 200,
+                height: 40,
+                child: ElevatedButton(
+                  onPressed: _submitQuiz,
+                  child: Text('Upload Quiz'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.lightBlue,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
               ),
             ],
           ),
