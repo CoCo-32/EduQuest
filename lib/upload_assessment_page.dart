@@ -13,44 +13,47 @@ class _UploadAssessmentPageState extends State<UploadAssessmentPage> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _pdfURLController = TextEditingController();
 
-  Stream<QuerySnapshot> _assessmentsStream = FirebaseFirestore.instance.collection('assessments').snapshots();
+  Stream<QuerySnapshot> _assessmentsStream =
+      FirebaseFirestore.instance.collection('assessments').snapshots();
 
   // Function to handle form submission
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       FirebaseFirestore firestore = FirebaseFirestore.instance;
-        await firestore.collection('assessments').add({
-          'title': _titleController.text,
-          'description': _descriptionController.text,
-          'pdfURL': _pdfURLController.text,
-        });
+      await firestore.collection('assessments').add({
+        'title': _titleController.text,
+        'description': _descriptionController.text,
+        'pdfURL': _pdfURLController.text,
+      });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Assessment added successfully'),
-            duration: Duration(seconds: 3),
-          ),
-        );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Assessment added successfully'),
+          duration: Duration(seconds: 3),
+        ),
+      );
 
-        _titleController.clear();
-        _descriptionController.clear();
-        _pdfURLController.clear();
-        setState(() {
-          _assessmentsStream = FirebaseFirestore.instance.collection('assessments').snapshots();
-        });
+      _titleController.clear();
+      _descriptionController.clear();
+      _pdfURLController.clear();
+      setState(() {
+        _assessmentsStream =
+            FirebaseFirestore.instance.collection('assessments').snapshots();
+      });
 
-        Navigator.pop(context);
-      }
+      Navigator.pop(context);
     }
+  }
 
   // Function to remove an assessment
   void _removeAssessment(String docId) async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
-      await firestore.collection('assessments').doc(docId).delete();
-      setState(() {
-        _assessmentsStream = FirebaseFirestore.instance.collection('assessments').snapshots();
-      });
-    }
+    await firestore.collection('assessments').doc(docId).delete();
+    setState(() {
+      _assessmentsStream =
+          FirebaseFirestore.instance.collection('assessments').snapshots();
+    });
+  }
 
   // Function to launch URL
   Future<void> _launchURL(String url) async {
@@ -65,114 +68,139 @@ class _UploadAssessmentPageState extends State<UploadAssessmentPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Upload Assessment'),
+        backgroundColor: Color(0xFFFFFDD0),
         actions: [
           IconButton(
             icon: Icon(Icons.refresh),
             onPressed: () {
               setState(() {
-                _assessmentsStream = FirebaseFirestore.instance.collection('assessments').snapshots();
+                _assessmentsStream = FirebaseFirestore.instance
+                    .collection('assessments')
+                    .snapshots();
               });
             },
           ),
         ],
       ),
+      backgroundColor: Color(0xFFFFFDD0),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              TextFormField(
-                controller: _titleController,
-                decoration: InputDecoration(labelText: 'Title'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a title';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 20),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Description'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a description';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 20),
-              TextFormField(
-                controller: _pdfURLController,
-                decoration: InputDecoration(labelText: 'PDF URL'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the PDF URL';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _submitForm,
-                child: Text('Add Assessment'),
-              ),
-              SizedBox(height: 20),
-              Expanded(
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: _assessmentsStream,
-                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (snapshot.hasError) {
-                      return Text('Something went wrong');
-                    }
-
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Text("Loading");
-                    }
-
-                    return SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                        columns: [
-                          DataColumn(label: Text('Title')),
-                          DataColumn(label: Text('Description')),
-                          DataColumn(label: Text('PDF URL')),
-                          DataColumn(label: Text('Actions')),
-                        ],
-                        rows: snapshot.data!.docs.map((DocumentSnapshot document) {
-                          Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-                          return DataRow(
-                            cells: [
-                              DataCell(Text(data['title'])),
-                              DataCell(Text(data['description'])),
-                              DataCell(
-                                InkWell(
-                                  onTap: () => _launchURL(data['pdfURL']),
-                                  child: Text(
-                                    data['pdfURL'] ,
-                                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
-                                  ),
-                                ),
-                              ),
-                              DataCell(
-                                IconButton(
-                                  icon: Icon(Icons.delete),
-                                  onPressed: () => _removeAssessment(document.id),
-                                ),
-                              ),
-                            ],
-                          );
-                        }).toList(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              width: 800,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    TextFormField(
+                      controller: _titleController,
+                      decoration: InputDecoration(labelText: 'Title'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a title';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 20),
+                    TextFormField(
+                      controller: _descriptionController,
+                      decoration: InputDecoration(labelText: 'Description'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a description';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 20),
+                    TextFormField(
+                      controller: _pdfURLController,
+                      decoration: InputDecoration(labelText: 'PDF URL'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter the PDF URL';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 20),
+                    SizedBox(
+                      width: 300,
+                      height: 40,
+                      child: ElevatedButton(
+                        onPressed: _submitForm,
+                        child: Text('Add Assessment'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.lightBlue,
+                          foregroundColor: Colors.white,
+                        ),
                       ),
-                    );
-                  },
+                    ),
+                    SizedBox(height: 20),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: _assessmentsStream,
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.hasError) {
+                    return Text('Something went wrong');
+                  }
+
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Text("Loading");
+                  }
+
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(
+                      columns: [
+                        DataColumn(label: Text('Title')),
+                        DataColumn(label: Text('Description')),
+                        DataColumn(label: Text('PDF URL')),
+                        DataColumn(label: Text('Actions')),
+                      ],
+                      rows:
+                          snapshot.data!.docs.map((DocumentSnapshot document) {
+                        Map<String, dynamic> data =
+                            document.data() as Map<String, dynamic>;
+                        return DataRow(
+                          cells: [
+                            DataCell(Text(data['title'])),
+                            DataCell(Text(data['description'])),
+                            DataCell(
+                              InkWell(
+                                onTap: () => _launchURL(data['pdfURL']),
+                                child: Text(
+                                  data['pdfURL'],
+                                  style: TextStyle(
+                                      color: Colors.blue,
+                                      decoration: TextDecoration.underline),
+                                ),
+                              ),
+                            ),
+                            DataCell(
+                              IconButton(
+                                icon: Icon(Icons.delete),
+                                onPressed: () => _removeAssessment(document.id),
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList(),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );

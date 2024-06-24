@@ -50,12 +50,14 @@ class _UserLoginPageState extends State<UserLoginPage> {
         title: Text('Login',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
         centerTitle: true,
+        backgroundColor: Color(0xFFFFFDD0),
       ),
+      backgroundColor: Color(0xFFFFFDD0),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Container(
-            width: 300, // Set the width to your desired value
+            width: 300,
             child: Form(
               key: _formKey,
               child: Column(

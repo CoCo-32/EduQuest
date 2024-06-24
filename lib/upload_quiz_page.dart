@@ -56,7 +56,11 @@ class _UploadQuizPageState extends State<UploadQuizPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Upload Quiz')),
+      appBar: AppBar(
+          title: Text('Upload Quiz'),
+          backgroundColor: Color(0xFFFFFDD0),
+    ),
+      backgroundColor: Color(0xFFFFFDD0),
       body: Form(
         key: _formKey,
         child: Padding(
@@ -75,6 +79,7 @@ class _UploadQuizPageState extends State<UploadQuizPage> {
                   _quizTitle = value;
                 },
               ),
+              SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _addQuestion,
                 child: Text('Add Question'),

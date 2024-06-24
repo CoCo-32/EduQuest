@@ -68,7 +68,9 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
         title: Text('Admin Login',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
         centerTitle: true,
+        backgroundColor: Color(0xFFFFFDD0),
       ),
+      backgroundColor: Color(0xFFFFFDD0),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),

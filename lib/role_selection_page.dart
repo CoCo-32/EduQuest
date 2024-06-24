@@ -12,7 +12,9 @@ class RoleSelectionPage extends StatelessWidget {
         title: Text('Select Role',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
         centerTitle: true,
+        backgroundColor: Color(0xFFFFFDD0),
       ),
+      backgroundColor: Color(0xFFFFFDD0),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Center(
