@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UploadLessonPage extends StatefulWidget {
   @override
@@ -11,27 +12,19 @@ class _UploadLessonPageState extends State<UploadLessonPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _slidesURLController = TextEditingController();
-  final TextEditingController _createdByController = TextEditingController();
 
-  DateTime _selectedDate = DateTime.now();
   Stream<QuerySnapshot> _lessonsStream = FirebaseFirestore.instance.collection('lessons').snapshots();
 
   // Function to handle form submission
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      // Access Firestore instance
       FirebaseFirestore firestore = FirebaseFirestore.instance;
-
-      // Add a new document with auto-generated ID
       await firestore.collection('lessons').add({
         'title': _titleController.text,
         'description': _descriptionController.text,
         'slidesURL': _slidesURLController.text,
-        'createdAt': Timestamp.now(), // Store current timestamp
-        'createdBy': _createdByController.text,
       });
 
-      // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Lesson added successfully'),
@@ -39,33 +32,32 @@ class _UploadLessonPageState extends State<UploadLessonPage> {
         ),
       );
 
-      // Clear text controllers after submission
       _titleController.clear();
       _descriptionController.clear();
       _slidesURLController.clear();
-      _createdByController.clear();
       setState(() {
-        _selectedDate = DateTime.now();
-        _lessonsStream = FirebaseFirestore.instance.collection('lessons').snapshots(); // Update the stream
+        _lessonsStream = FirebaseFirestore.instance.collection('lessons').snapshots();
       });
 
-      // Navigate back to Manage Lessons page
       Navigator.pop(context);
     }
   }
 
-  // Function to show date picker
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null && picked != _selectedDate)
-      setState(() {
-        _selectedDate = picked;
-      });
+  // Function to remove a lesson
+  void _removeLesson(String docId) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    await firestore.collection('lessons').doc(docId).delete();
+    setState(() {
+      _lessonsStream = FirebaseFirestore.instance.collection('lessons').snapshots();
+    });
+  }
+
+  // Function to launch URL
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw 'Could not launch $url';
+    }
   }
 
   @override
@@ -78,7 +70,7 @@ class _UploadLessonPageState extends State<UploadLessonPage> {
             icon: Icon(Icons.refresh),
             onPressed: () {
               setState(() {
-                _lessonsStream = FirebaseFirestore.instance.collection('lessons').snapshots(); // Refresh the stream
+                _lessonsStream = FirebaseFirestore.instance.collection('lessons').snapshots();
               });
             },
           ),
@@ -124,31 +116,6 @@ class _UploadLessonPageState extends State<UploadLessonPage> {
                 },
               ),
               SizedBox(height: 20),
-              TextFormField(
-                controller: _createdByController,
-                decoration: InputDecoration(labelText: 'Created By'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the creator\'s name';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  Text(
-                    'Created At: ${_selectedDate.toLocal()}'.split(' ')[0],
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  SizedBox(width: 20),
-                  ElevatedButton(
-                    onPressed: () => _selectDate(context),
-                    child: Text('Select date'),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _submitForm,
                 child: Text('Add Lesson'),
@@ -166,17 +133,40 @@ class _UploadLessonPageState extends State<UploadLessonPage> {
                       return Text("Loading");
                     }
 
-                    return ListView(
-                      children: snapshot.data!.docs.map((DocumentSnapshot document) {
-                        Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-                        Timestamp createdAt = data['createdAt'];
-                        DateTime createdAtDate = createdAt.toDate();
-                        return ListTile(
-                          title: Text(data['title']),
-                          subtitle: Text(data['description']),
-                          trailing: Text('Created by: ${data['createdBy']} on ${createdAtDate.toLocal()}'),
-                        );
-                      }).toList(),
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: DataTable(
+                        columns: [
+                          DataColumn(label: Text('Title')),
+                          DataColumn(label: Text('Description')),
+                          DataColumn(label: Text('Slides URL')),
+                          DataColumn(label: Text('Actions')),
+                        ],
+                        rows: snapshot.data!.docs.map((DocumentSnapshot document) {
+                          Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                          return DataRow(
+                            cells: [
+                              DataCell(Text(data['title'])),
+                              DataCell(Text(data['description'])),
+                              DataCell(
+                                InkWell(
+                                  onTap: () => _launchURL(data['slidesURL']),
+                                  child: Text(
+                                    data['slidesURL'],
+                                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                IconButton(
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () => _removeLesson(document.id),
+                                ),
+                              ),
+                            ],
+                          );
+                        }).toList(),
+                      ),
                     );
                   },
                 ),
