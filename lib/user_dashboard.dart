@@ -36,8 +36,11 @@ class _UserDashboardState extends State<UserDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('EduQuest', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('EduQuest',
+            style: TextStyle(fontWeight: FontWeight.bold)
+        ),
         centerTitle: true,
+        backgroundColor: Color(0xFFFFFDD0),
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(48.0),
           child: Row(

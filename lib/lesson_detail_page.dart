@@ -25,7 +25,9 @@ class LessonDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Lesson Detail'),
+        backgroundColor: Color(0xFFFFFDD0),
       ),
+      backgroundColor: Color(0xFFFFFDD0),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
