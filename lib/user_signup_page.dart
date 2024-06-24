@@ -29,7 +29,7 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
 
       try {
         UserCredential userCredential =
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: email,
           password: password,
         );
@@ -58,62 +58,73 @@ class _UserSignUpPageState extends State<UserSignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sign Up'),
+        title: Text('Sign Up',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
+        centerTitle: true,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              TextFormField(
-                controller: _usernameController,
-                decoration: InputDecoration(
-                  labelText: 'Username',
-                ),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter a username';
-                  }
-                  return null;
-                },
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Container(
+            width: 300,
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  TextFormField(
+                    controller: _usernameController,
+                    decoration: InputDecoration(
+                      labelText: 'Username',
+                    ),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter a username';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 16),
+                  TextFormField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                    ),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter an email';
+                      }
+                      // You can add more complex email validation if needed
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 16),
+                  TextFormField(
+                    controller: _passwordController,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                    ),
+                    obscureText: true,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter a password';
+                      }
+                      // You can add more complex password validation if needed
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 32),
+                  SizedBox(
+                    width: double.infinity, // Make the button full-width
+                    height: 35,
+                    child: ElevatedButton(
+                      onPressed: _submit,
+                      child: Text('Sign Up'),
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(height: 16.0),
-              TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                ),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter an email';
-                  }
-                  // You can add more complex email validation if needed
-                  return null;
-                },
-              ),
-              SizedBox(height: 16.0),
-              TextFormField(
-                controller: _passwordController,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                ),
-                obscureText: true,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter a password';
-                  }
-                  // You can add more complex password validation if needed
-                  return null;
-                },
-              ),
-              SizedBox(height: 32.0),
-              ElevatedButton(
-                onPressed: _submit,
-                child: Text('Sign Up'),
-              ),
-            ],
+            ),
           ),
         ),
       ),

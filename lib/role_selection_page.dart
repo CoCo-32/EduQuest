@@ -9,7 +9,9 @@ class RoleSelectionPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Select Role'),
+        title: Text('Select Role',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -17,42 +19,55 @@ class RoleSelectionPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => UserLoginPage()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                  backgroundColor: Colors.blue,
-                  textStyle: TextStyle(fontSize: 18),
-                ),
-                child: Text('User'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  SizedBox(
+                    width: 200,
+                    height: 200,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UserLoginPage()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        textStyle: TextStyle(fontSize: 24),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: Text('User'),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 200,
+                    height: 200,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AdminLoginPage()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        textStyle: TextStyle(fontSize: 24),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: Text('Admin'),
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(height: 20),
-              Divider(
-                height: 30,
-                thickness: 2,
-                color: Colors.red,
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => AdminLoginPage()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                  backgroundColor: Colors.green,
-                  textStyle: TextStyle(fontSize: 18),
-                ),
-                child: Text('Admin'),
-              ),
-              // Add more role selection buttons as needed
             ],
           ),
         ),

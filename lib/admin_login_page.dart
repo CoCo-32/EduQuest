@@ -32,7 +32,9 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
         // Navigate to admin dashboard on successful login
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => AdminDashboard()), // Replace with your admin dashboard page
+          MaterialPageRoute(
+              builder: (context) =>
+                  AdminDashboard()), // Replace with your admin dashboard page
         );
       } catch (e) {
         // Handle login errors here (e.g., display error message)
@@ -42,7 +44,8 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text('Login Error'),
-              content: Text('Failed to sign in. Please check your credentials and try again.'),
+              content: Text(
+                  'Failed to sign in. Please check your credentials and try again.'),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
@@ -62,47 +65,58 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Admin Login'),
+        title: Text('Admin Login',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
+        centerTitle: true,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                ),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter an email';
-                  }
-                  return null;
-                },
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Container(
+            width: 300,
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  TextFormField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                    ),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter an email';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 16.0),
+                  TextFormField(
+                    controller: _passwordController,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                    ),
+                    obscureText: true,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter a password';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 32),
+                  SizedBox(
+                    width: double.infinity, // Make the button full-width
+                    height: 35,
+                    child: ElevatedButton(
+                      onPressed: _loginAdmin,
+                      child: Text('Login'),
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(height: 16.0),
-              TextFormField(
-                controller: _passwordController,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                ),
-                obscureText: true,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter a password';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 32.0),
-              ElevatedButton(
-                onPressed: _loginAdmin,
-                child: Text('Login'),
-              ),
-            ],
+            ),
           ),
         ),
       ),

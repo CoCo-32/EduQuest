@@ -18,7 +18,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   static const List<Widget> _widgetOptions = <Widget>[
     Text('Lesson Page'),
-    Text('Assessment Page'),
+
     Text('Quiz Page'),
   ];
 
