@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:url_launcher/url_launcher.dart'; // Import url_launcher package
+import 'package:url_launcher/url_launcher.dart';
 
 class AssessmentDetailPage extends StatefulWidget {
   final String title;
-  final String fileUrl;
+  final String pdfURL;
   final Function? onSubmitted; // Callback function to notify parent
 
-  AssessmentDetailPage({required this.title, required this.fileUrl, this.onSubmitted});
+  AssessmentDetailPage({required this.title, required this.pdfURL, this.onSubmitted});
 
   @override
   _AssessmentDetailPageState createState() => _AssessmentDetailPageState();
@@ -18,10 +18,10 @@ class _AssessmentDetailPageState extends State<AssessmentDetailPage> {
   String submissionUrl = '';
   bool isSubmitted = false;
 
-  void submitSubmission(BuildContext context, String name, String fileUrl) {
+  void submitSubmission(BuildContext context, String name, String submissionUrl) {
     FirebaseFirestore.instance.collection('submissions').add({
       'name': name,
-      'fileURL': fileUrl,
+      'submissionURL': submissionUrl,
       'time': FieldValue.serverTimestamp(),
     }).then((_) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -47,13 +47,13 @@ class _AssessmentDetailPageState extends State<AssessmentDetailPage> {
     });
   }
 
-  void _launchPDF(BuildContext context) async {
-    if (await canLaunch(widget.fileUrl)) {
-      await launch(widget.fileUrl);
+  Future<void> _launchPDFURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Could not launch PDF'),
+          content: Text('Could not launch PDF: $url'),
           duration: Duration(seconds: 2),
         ),
       );
@@ -73,15 +73,11 @@ class _AssessmentDetailPageState extends State<AssessmentDetailPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('PDF URL:'),
-              TextButton(
-                onPressed: () => _launchPDF(context),
-                child: Text(
-                  'View PDF',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    decoration: TextDecoration.underline,
-                  ),
-                ),
+              ElevatedButton(
+                onPressed: () {
+                  _launchPDFURL(widget.pdfURL);
+                },
+                child: Text('View PDF'),
               ),
               SizedBox(height: 20),
               Text('Submit Your Work:'),

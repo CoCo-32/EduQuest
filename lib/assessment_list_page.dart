@@ -55,7 +55,7 @@ class _AssessmentListPageState extends State<AssessmentListPage> {
                         MaterialPageRoute(
                           builder: (context) => AssessmentDetailPage(
                             title: assessment['title'],
-                            fileUrl: assessment['pdfURL'],
+                            pdfURL: assessment['pdfURL'],
                             onSubmitted: () {
                               // Handle submission update if needed
                               // This callback is triggered when submission is complete
