@@ -124,7 +124,7 @@ class _QuizDetailPageState extends State<QuizDetailPage> {
                   );
                 }
               },
-              child: Text('Submit'),
+              child: Text('Submit now'),
             ),
           ],
         ),
