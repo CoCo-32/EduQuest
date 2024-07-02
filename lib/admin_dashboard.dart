@@ -29,7 +29,7 @@ class AdminDashboard extends StatelessWidget {
               ),
               SizedBox(height: 40),
               SizedBox(
-                width: 300,
+                width: 400,
                 height: 80,
                 child: ElevatedButton(
                   onPressed: () {
@@ -50,7 +50,7 @@ class AdminDashboard extends StatelessWidget {
               ),
               SizedBox(height: 10),
               SizedBox(
-                width: 300,
+                width: 400,
                 height: 80,
                 child: ElevatedButton(
                   onPressed: () {
@@ -71,7 +71,7 @@ class AdminDashboard extends StatelessWidget {
               ),
               SizedBox(height: 10),
               SizedBox(
-                width: 300,
+                width: 400,
                 height: 80,
                 child: ElevatedButton(
                   onPressed: () {
@@ -91,7 +91,7 @@ class AdminDashboard extends StatelessWidget {
               ),
               SizedBox(height: 10),
               SizedBox(
-                width: 300,
+                width: 400,
                 height: 80,
                 child: ElevatedButton(
                   onPressed: () {
@@ -112,7 +112,7 @@ class AdminDashboard extends StatelessWidget {
               ),
               SizedBox(height: 10),
               SizedBox(
-                width: 300,
+                width: 400,
                 height: 80,
                 child: ElevatedButton(
                   onPressed: () {

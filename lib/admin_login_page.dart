@@ -138,6 +138,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                       ),
                     ),
                   ),
+                  SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity, // Make the button full-width
                     height: 40,
