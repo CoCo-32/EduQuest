@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 class AssessmentDetailPage extends StatefulWidget {
   final String title;
   final String pdfURL;
-  final Function? onSubmitted; // Callback function to notify parent
+  final Function? onSubmitted;
 
   AssessmentDetailPage({required this.title, required this.pdfURL, this.onSubmitted});
 

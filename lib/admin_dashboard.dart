@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'upload_lesson_page.dart'; // Import the UploadLessonPage
-import 'upload_assessment_page.dart'; // Import the UploadAssessmentPage
-import 'upload_quiz_page.dart'; // Import the UploadQuizPage
-import 'role_selection_page.dart'; // Import the RoleSelectionPage
-import 'check_assessment_submission_page.dart'; // Import the CheckSubmissionPage
-import 'check_quiz_submission_page.dart'; // Import the QuizSubmissionPage
+import 'upload_lesson_page.dart';
+import 'upload_assessment_page.dart';
+import 'upload_quiz_page.dart';
+import 'role_selection_page.dart';
+import 'check_assessment_submission_page.dart';
+import 'check_quiz_submission_page.dart';
 
 class AdminDashboard extends StatelessWidget {
   @override

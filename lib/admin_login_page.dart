@@ -81,12 +81,6 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
         ),
         centerTitle: true,
         backgroundColor: Color(0xFFFFFDD0),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.home),
-            onPressed: _goToRoleSelectionPage, // Navigate to RoleSelectionPage
-          ),
-        ],
       ),
       backgroundColor: Color(0xFFFFFDD0),
       body: Center(
